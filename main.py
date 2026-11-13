@@ -1,43 +1,38 @@
 import os
-import requests
-from fastapi import FastAPI, Request
+import telebot
+from commands import (
+    start, myaccount, signup, login, email, passkey, 
+    username, date_birth, gender, call_coin, profile_photo, 
+    banner_photo, short_1, short_2, short_3, image_1, 
+    image_2, image_3, withdraw, recharge
+)
 
-app = FastAPI()
-
-# Uses your provided token directly (falls back to environment variables if updated later)
+# আপনার টেলিগ্রাম টোকেন
 TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "9176612733:AAHXgLW4KUr849twomYZPZ2AxSaOHwbOivI")
-TELEGRAM_API_URL = f"https://api.telegram.org/bot{TOKEN}"
+bot = telebot.TeleBot(TOKEN)
 
-@app.get("/")
-def home():
-    return {"status": "Telegram bot is running smoothly!"}
+# সব আলাদা ফাইলের কমান্ডগুলো রেজিস্টার করা হচ্ছে
+start.register(bot)
+myaccount.register(bot)
+signup.register(bot)
+login.register(bot)
+email.register(bot)
+passkey.register(bot)
+username.register(bot)
+date_birth.register(bot)
+gender.register(bot)
+call_coin.register(bot)
+profile_photo.register(bot)
+banner_photo.register(bot)
+short_1.register(bot)
+short_2.register(bot)
+short_3.register(bot)
+image_1.register(bot)
+image_2.register(bot)
+image_3.register(bot)
+withdraw.register(bot)
+recharge.register(bot)
 
-@app.post("/")
-async def handle_webhook(req: Request):
-    data = await req.json()
-    
-    # Check if a message exists in the incoming Telegram update
-    if "message" in data:
-        message = data["message"]
-        chat_id = message["chat"]["id"]
-        text = message.get("text", "")
-        user_name = message["from"].get("first_name", "User")
-
-        # Basic command handling
-        if text == "/start":
-            response_text = f"Hello {user_name}! Your flat-structure Vercel Python bot is live. 🚀"
-        elif text == "/help":
-            response_text = "I am your serverless Telegram bot. Send me any message and I will reply!"
-        else:
-            response_text = f"Hello {user_name}, you said: '{text}'"
-
-        # Payload to send back to Telegram
-        payload = {
-            "chat_id": chat_id,
-            "text": response_text
-        }
-        
-        # Send the response using Telegram's Bot API
-        requests.post(f"{TELEGRAM_API_URL}/sendMessage", json=payload)
-
-    return {"status": "ok"}
+if __name__ == "__main__":
+    print("Bot is running with modular structure...")
+    bot.infinity_polling()
